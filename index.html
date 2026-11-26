@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rebound2D DEMO</title>
+</head>
+<body>
+    <link rel="stylesheet" href="css/styles.css">
+    <canvas id="game" width="800" height="500"></canvas>
+    <script src="https://unpkg.com/@dinobot__/rebound2d"></script>
+    <script>
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+
+        //physics object
+        const ball = {
+            x: 100,
+            y: 100,
+            vx: 250,
+            vy: 250,
+            radius: 20,
+            restitution: 0.8
+        }
+        const bodies = [ball];
+
+        //loop
+        let lastTime = performance.now();
+        function loop(timestamp) {
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+            lastTime = timestamp;
+            Rebound2D.updatePhysics(dt, bodies, canvas);
+            requestAnimationFrame(loop);
+
+            //render
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const body of bodies) {
+                ctx.beginPath();
+                ctx.arc(body.x, body.y, body.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'red';
+                ctx.fill();
+            }
+        }
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
