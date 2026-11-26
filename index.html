@@ -13,11 +13,15 @@
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
 
-        //physics object
+        let canPlayAudio = true;
+        let bounceSound = new Audio('./audio/bounce.mp3');
+        let impactSpeed = 0;
+
+        // physics object
         const ball = {
             x: 100,
             y: 100,
-            vx: 250,
+            vx: 600,
             vy: 250,
             radius: 20,
             restitution: 0.8
@@ -29,7 +33,14 @@
         function loop(timestamp) {
             const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
             lastTime = timestamp;
-            Rebound2D.updatePhysics(dt, bodies, canvas);
+            Rebound2D.updatePhysics(dt, bodies, canvas, () => {
+                //play bounce sound for better experience
+                if (!canPlayAudio || impactSpeed < 40) return;
+
+                const sfx = bounceSound.cloneNode();
+                sfx.volume = Math.min(impactSpeed / 800, 1);
+                sfx.play().catch(() => {});
+            });
             requestAnimationFrame(loop);
 
             //render
