@@ -15,7 +15,6 @@
 
         let canPlayAudio = true;
         let bounceSound = new Audio('./audio/bounce.mp3');
-        let impactSpeed = 0;
 
         // physics object
         const ball = {
@@ -35,11 +34,13 @@
             lastTime = timestamp;
             Rebound2D.updatePhysics(dt, bodies, canvas, () => {
                 //play bounce sound for better experience
-                if (!canPlayAudio || impactSpeed < 40) return;
+                onBounce: (body, impactSpeed) => {
+                    if (!canPlayAudio || impactSpeed < 40) return;
 
                 const sfx = bounceSound.cloneNode();
                 sfx.volume = Math.min(impactSpeed / 800, 1);
                 sfx.play().catch(() => {});
+                }
             });
             requestAnimationFrame(loop);
 
